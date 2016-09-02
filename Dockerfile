@@ -13,35 +13,37 @@ ENV OPENSSL_VERSION 1.0.2h
 
 # Setup Environment
 ENV MODULE_DIR /usr/src/nginx-module
+ENV DATA_DIR /data
 
 # Prepare
 RUN echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d
-RUN apt-get update \
- && apt-get install -y build-essential software-properties-common \
- && apt-get install software-properties-common wget ffmpeg  -y
+RUN apt-get update && \
+    apt-get install -y build-essential software-properties-common && \
+    apt-get install software-properties-common wget ffmpeg  -y
 
-RUN mkdir ${MODULE_DIR}
+RUN mkdir ${MODULE_DIR} && \
+    mkdir ${DATA_DIR}
 
 # Nginx Dependencies
 RUN apt-get install -y libpcre3-dev zlib1g-dev
 
 # Prepare Source
-RUN cd /usr/src \
- && wget -q http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz \
- && tar xzf nginx-${NGINX_VERSION}.tar.gz \
- && rm -rf nginx-${NGINX_VERSION}.tar.gz
+RUN cd /usr/src && \
+    wget -q http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && \
+    tar xzf nginx-${NGINX_VERSION}.tar.gz && \
+    rm -rf nginx-${NGINX_VERSION}.tar.gz
 
 
-RUN cd /usr/src \
- && wget -q http://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz \
- && tar xzf openssl-${OPENSSL_VERSION}.tar.gz \
- && rm -rf openssl-${OPENSSL_VERSION}.tar.gz
+RUN cd /usr/src && \
+    wget -q http://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
+    tar xzf openssl-${OPENSSL_VERSION}.tar.gz && \
+    rm -rf openssl-${OPENSSL_VERSION}.tar.gz
 
-RUN cd ${MODULE_DIR} \
- && wget -q https://github.com/arut/nginx-rtmp-module/archive/v${RTMP_MODULE_VERSION}.tar.gz \
- && tar zxf v${RTMP_MODULE_VERSION}.tar.gz \
- && rm v${RTMP_MODULE_VERSION}.tar.gz \
- && ls -al ${MODULE_DIR}
+RUN cd ${MODULE_DIR} && \
+    wget -q https://github.com/arut/nginx-rtmp-module/archive/v${RTMP_MODULE_VERSION}.tar.gz && \
+    tar zxf v${RTMP_MODULE_VERSION}.tar.gz && \
+    rm v${RTMP_MODULE_VERSION}.tar.gz && \
+    ls -al ${MODULE_DIR}
 
 # Compile Nginx
 RUN cd /usr/src/nginx-${NGINX_VERSION} && \
